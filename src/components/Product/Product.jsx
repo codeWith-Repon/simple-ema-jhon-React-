@@ -4,7 +4,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Product = ({ product, handleAddProduct, showAddToCart }) => {
-  console.log(product)
+  // console.log(product)
   return (
     <div className="product">
       <div className="product-image">
