@@ -1,15 +1,17 @@
 import React from "react";
 import "./Product.css";
 import { FaShoppingCart } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
-const Product = ({ product, handleAddProduct }) => {
+const Product = ({ product, handleAddProduct, showAddToCart }) => {
+  console.log(product)
   return (
     <div className="product">
       <div className="product-image">
         <img src={product.img} alt="" />
       </div>
       <div>
-        <h4 className="product-name">{product.name}</h4>
+        <h4 className="product-name"><Link to={`/product/${product.key}`}>{product.name}</Link></h4>
         <p>
           <small> by: {product.seller}</small>
         </p>
@@ -17,10 +19,10 @@ const Product = ({ product, handleAddProduct }) => {
         <p>
           <small>only {product.stock} left in stock-order soon</small>
         </p>
-        <button className="main-button" onClick={handleAddProduct }>
+        {showAddToCart ? <button className="main-button" onClick={handleAddProduct }>
           <FaShoppingCart />
           add to cart
-        </button>
+        </button> : ""}
       </div>
     </div>
   );

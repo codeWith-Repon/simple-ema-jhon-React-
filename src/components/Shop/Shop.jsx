@@ -21,6 +21,7 @@ const Shop = () => {
       <div className="product-container">
         {products.map((product, index) => (
           <Product
+            showAddToCart={true}
             key={index}
             product={product}
             handleAddProduct={() => handleAddProduct(product)}

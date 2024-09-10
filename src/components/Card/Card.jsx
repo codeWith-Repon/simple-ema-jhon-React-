@@ -1,5 +1,6 @@
 import React from "react";
 import './Card.css'
+import { Link } from "react-router-dom";
 
 const Card = ({ cart }) => {
   // const total = cart.reduce((total,prd)=> total + prd.price, 0);
@@ -18,7 +19,7 @@ const Card = ({ cart }) => {
     shipping = 12.99;
   }
 
-  const tax = total / 10;
+  const tax = (total / 10).toFixed(2);
   const grandTotal = (total + shipping + Number(tax)).toFixed(2);
 
   const formatNumber = (num) => {
@@ -35,9 +36,11 @@ const Card = ({ cart }) => {
         <small>Shipping Cost: {shipping} </small>
       </p>
       <p>
-        <small>Tax + VAT: {formatNumber(tax)}</small>
+        <small>Tax + VAT: {tax}</small>
       </p>
       <p>total Price: {grandTotal}</p>
+      <br />
+      <Link to='/review'><button className="main-button">Review Order</button></Link>
     </div>
   );
 };
