@@ -1,7 +1,7 @@
 import React from 'react'
 
-const ReviewItem = ({product}) => {
-    const {name, quantity} = product;
+const ReviewItem = ({product, handleRemoveProduct}) => {
+    const {name, quantity, key} = product;
 
     const reviewItemStyle ={
         borderBottom: "1px solid lightgray",
@@ -14,7 +14,7 @@ const ReviewItem = ({product}) => {
       <h4 className='product-name'>{name}</h4>
       <p>Quantity: {quantity}</p>
       <br />
-      <button className='main-button'>Remove</button>
+      <button onClick={()=>handleRemoveProduct(key)} className='main-button'>Remove</button>
     </div>
   )
 }
