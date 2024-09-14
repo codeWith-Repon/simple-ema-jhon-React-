@@ -10,18 +10,30 @@ const Shop = () => {
   const [products, setProducts] = useState(first10);
 
   const [cart, setCart] = useState([]);
+  console.log(cart)
 
   const handleAddProduct = (product) => {  
-    console.log("produnct added", product);
-    const newCart = [...cart, product];
+    const toBeAdedKey = product.key
+    const smaeProduct = cart.find(pd => pd.key === toBeAdedKey)
+    let count = 1;
+    let newCart;
+    if(smaeProduct){
+      count = smaeProduct.quantity + 1;
+      smaeProduct.quantity = count;
+      const other = cart.filter(pd => pd.key !== product.key)
+      newCart = [...other, smaeProduct]
+    }
+    else {
+      product.quantity = 1
+      newCart = [...cart,product]
+    }
     setCart(newCart);
-    const smaeProduct = newCart.filter(pd => pd.key === product.key)
-    const count = smaeProduct.length;
+    
     addToDatabaseCart(product.key, count)
   };
 
   return (
-    <div className="shop-container">
+    <div className="twin-container">
       <div className="product-container">
         {products.map((product) => (
           <Product
