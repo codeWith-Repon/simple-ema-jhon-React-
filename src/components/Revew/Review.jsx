@@ -4,15 +4,15 @@ import fakeData from "../../assets/fakeData";
 import ReviewItem from "../ReviewItem/ReviewItem";
 import Card from "../Card/Card";
 import happyImage from '../../assets/images/giphy.gif'
+import { useNavigate } from "react-router-dom";
 
 const Review = () => {
   const [cart, setCart] = useState([]);
   const [orderPlaced, setOrderPlaced] = useState(false)
+  const navigate = useNavigate()
 
-  const handlePlaceOrder = () => {
-    setCart([]);
-    setOrderPlaced(true)
-    clearLocalShoppingCart()
+  const handleProceedCheckout = () => {
+   navigate("/shipment")
   }
 
   const handleRemoveProduct = productKey => {
@@ -52,7 +52,7 @@ const Review = () => {
      </div> 
      <div className="cart-container">
         <Card cart={cart}>
-          <button onClick={handlePlaceOrder} className="main-button">Place Order</button>
+          <button onClick={handleProceedCheckout} className="main-button">Proceed Checkout</button>
         </Card> 
         
      </div>
