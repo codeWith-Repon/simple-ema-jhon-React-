@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useState } from "react";
 import Header from "./components/Header/Header";
 import Shop from "./components/Shop/Shop";
 import { Route, Routes } from "react-router-dom";
@@ -9,9 +9,13 @@ import ProductDetails from "./components/ProductDetail/ProductDetails";
 import Shipment from "./components/Shipment/Shipment";
 import Login from "./components/Login/Login";
 
+export const UserContext = createContext()
+
 const App = () => {
+  const [loggedInUser, setLoggedInUser] = useState({})
   return (
-    <div>
+    <UserContext.Provider value={[loggedInUser, setLoggedInUser]}>
+      <h3>email:{loggedInUser.email}</h3>
       <Header />
       <Routes>
         <Route path="/" element={<Shop />} />
@@ -23,7 +27,7 @@ const App = () => {
         <Route path="/product/:key" element={<ProductDetails />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </div>
+    </UserContext.Provider>
   );
 };
 

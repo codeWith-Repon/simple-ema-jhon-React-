@@ -5,8 +5,9 @@ import {
   GoogleAuthProvider,
   signOut,
 } from "firebase/auth";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import firebaseConfig from "./firebase.config";
+import { UserContext } from "../../App";
 
 const initialState = {
   isSignedIn: false,
@@ -19,7 +20,9 @@ const initialState = {
 const app = initializeApp(firebaseConfig);
 
 function Login() {
+  const [loggedInUser, setLoggedInUser] = useContext(UserContext  )
   const [user, setUser] = useState(initialState);
+  const [newUser, setNewUser] = useState(false)
   const provider = new GoogleAuthProvider();
 
   const handleSignIn = () => {
@@ -38,6 +41,8 @@ function Login() {
           photoURL,
         };
         setUser(signedUser);
+        setLoggedInUser(signedUser)  
+        console.log("photourl", signedUser.photoURL)
       })
       .catch((error) => {
         console.error(error);
@@ -62,7 +67,7 @@ function Login() {
     // Handle form submission
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e) => { 
     const { name, value } = e.target;
     let isFormValid;
 
@@ -71,7 +76,7 @@ function Login() {
         isFormValid = /\S+@\S+\.\S+/.test(value);
         break;
       case "password":
-        isFormValid = value.length > 6;
+        isFormValid = value.length > 3;
         break;
       case "name":
         isFormValid = value.trim() !== "";
