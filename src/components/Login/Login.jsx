@@ -4,6 +4,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
+  createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { useContext, useState } from "react";
 import firebaseConfig from "./firebase.config";
@@ -15,14 +16,16 @@ const initialState = {
   email: "",
   password: "",
   photoURL: "",
+  error: "",
+  success: false,
 };
 
 const app = initializeApp(firebaseConfig);
 
 function Login() {
-  const [loggedInUser, setLoggedInUser] = useContext(UserContext  )
+  const [loggedInUser, setLoggedInUser] = useContext(UserContext);
   const [user, setUser] = useState(initialState);
-  const [newUser, setNewUser] = useState(false)
+  const [newUser, setNewUser] = useState(false);
   const provider = new GoogleAuthProvider();
 
   const handleSignIn = () => {
@@ -41,8 +44,8 @@ function Login() {
           photoURL,
         };
         setUser(signedUser);
-        setLoggedInUser(signedUser)  
-        console.log("photourl", signedUser.photoURL)
+        setLoggedInUser(signedUser);
+        console.log("photourl", signedUser.photoURL);
       })
       .catch((error) => {
         console.error(error);
@@ -65,27 +68,44 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission
+    if (user.email && user.password) {
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth, user.email, user.password)
+        .then((userCredential) => {
+          // Signed up
+          const newUserInfo = { ...user };
+          newUserInfo.error = "";
+          newUserInfo.success = true;
+          setUser(newUserInfo);
+        })
+        .catch((error) => {
+          const newUserInfo = { ...user };
+          newUserInfo.error = error.message;
+          newUserInfo.success = false;
+          setUser(newUserInfo);
+        });
+    }
   };
 
-  const handleChange = (e) => { 
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    let isFormValid;
+    let isFieldValid;
 
     switch (name) {
       case "email":
-        isFormValid = /\S+@\S+\.\S+/.test(value);
+        isFieldValid = /\S+@\S+\.\S+/.test(value);
         break;
       case "password":
-        isFormValid = value.length > 3;
+        isFieldValid = value.length > 3;
         break;
       case "name":
-        isFormValid = value.trim() !== "";
+        isFieldValid = value.trim() !== "";
         break;
       default:
-        isFormValid = false;
+        isFieldValid = false;
     }
 
-    if (isFormValid) {
+    if (isFieldValid) {
       setUser((prevUser) => ({
         ...prevUser,
         [name]: value,
@@ -94,13 +114,12 @@ function Login() {
   };
 
   return (
-    <div style={{textAlign: "center"}}>
+    <div style={{ textAlign: "center" }}>
       {!user.isSignedIn ? (
         <button onClick={handleSignIn}>Sign In</button>
       ) : (
         <button onClick={handleSignOut}>Sign Out</button>
       )}
-
       {user.isSignedIn && (
         <div>
           <p>Welcome, {user.name}</p>
@@ -108,12 +127,7 @@ function Login() {
           <img src={user.photoURL} alt="User profile" />
         </div>
       )}
-
       <h1>Our Own Authentication System</h1>
-      <p>Name: {user.name}</p>
-      <p>Email: {user.email}</p>
-      <p>Password: {user.password}</p>
-
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -139,7 +153,13 @@ function Login() {
         />
         <br />
         <input type="submit" value="Submit" />
-      </form>
+      </form>{" "}
+      {user.success ? (
+                <p style={{color: "green"}}>User created successfully</p>
+      ) : (
+        
+        <p style={{ color: "red" }}>{user.error}</p>
+      )}
     </div>
   );
 }
