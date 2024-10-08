@@ -6,6 +6,7 @@ import {
   signOut,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { useContext, useState } from "react";
 import firebaseConfig from "./firebase.config";
@@ -72,12 +73,14 @@ function Login() {
     if (user.email && user.password) {
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, user.email, user.password)
-        .then((userCredential) => {
+        .then((res) => {
           // Signed up
           const newUserInfo = { ...user };
           newUserInfo.error = "";
           newUserInfo.success = true;
           setUser(newUserInfo);
+          updateUsaerName(user.name)
+          console.log("sign in user info", res.user)
         })
         .catch((error) => {
           const newUserInfo = { ...user };
@@ -87,14 +90,13 @@ function Login() {
         });
     }
 
-    if(!newUser && user.email && user.password){
+    if (!newUser && user.email && user.password) {
       const auth = getAuth();
       signInWithEmailAndPassword(auth, user.email, user.password)
         .then((res) => {
-          const newUserInfo = {...user}
-          newUserInfo.error = '',
-          newUserInfo.success = true;
-          setUser(newUserInfo)
+          const newUserInfo = { ...user };
+          (newUserInfo.error = ""), (newUserInfo.success = true);
+          setUser(newUserInfo);
         })
         .catch((error) => {
           const newUserInfo = { ...user };
@@ -131,6 +133,18 @@ function Login() {
     }
   };
 
+  const updateUsaerName = (name) => {
+    const auth = getAuth();
+    updateProfile(auth.currentUser, {
+      displayName: name,
+    })
+      .then(() => {
+        console.log("user name updated sussfully ")
+      })
+      .catch((error) => {
+       console.log(error)
+      });
+  };
   return (
     <div style={{ textAlign: "center" }}>
       {!user.isSignedIn ? (
@@ -173,7 +187,7 @@ function Login() {
           required
         />
         <br />
-        <input type="submit" value="Submit" />
+        <input type="submit" value={newUser ? "Sign up": "Sign in"} />
       </form>{" "}
       {user.success ? (
                 <p style={{color: "green"}}>User {newUser?"Created" : "Login"} successfully</p>
