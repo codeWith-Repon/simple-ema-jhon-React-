@@ -5,6 +5,7 @@ import {
   GoogleAuthProvider,
   signOut,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useContext, useState } from "react";
 import firebaseConfig from "./firebase.config";
@@ -85,6 +86,23 @@ function Login() {
           setUser(newUserInfo);
         });
     }
+
+    if(!newUser && user.email && user.password){
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, user.email, user.password)
+        .then((res) => {
+          const newUserInfo = {...user}
+          newUserInfo.error = '',
+          newUserInfo.success = true;
+          setUser(newUserInfo)
+        })
+        .catch((error) => {
+          const newUserInfo = { ...user };
+          newUserInfo.error = error.message;
+          newUserInfo.success = false;
+          setUser(newUserInfo);
+        });
+    }
   };
 
   const handleChange = (e) => {
@@ -128,13 +146,16 @@ function Login() {
         </div>
       )}
       <h1>Our Own Authentication System</h1>
+      <input  onChange={()=>setNewUser(!newUser)} type="checkbox" name="newUser" id=""/>
+      <label htmlFor="newUser">New user Sign up </label>
       <form onSubmit={handleSubmit}>
-        <input
+      {newUser &&  <input
           type="text"
           name="name"
           placeholder="Your name"
           onBlur={handleChange}
-        />
+        />} 
+       
         <br />
         <input
           type="text"
@@ -155,7 +176,7 @@ function Login() {
         <input type="submit" value="Submit" />
       </form>{" "}
       {user.success ? (
-                <p style={{color: "green"}}>User created successfully</p>
+                <p style={{color: "green"}}>User {newUser?"Created" : "Login"} successfully</p>
       ) : (
         
         <p style={{ color: "red" }}>{user.error}</p>
