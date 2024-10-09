@@ -26,6 +26,7 @@ const app = initializeApp(firebaseConfig);
 
 function Login() {
   const [loggedInUser, setLoggedInUser] = useContext(UserContext);
+  console.log(loggedInUser)
   const [user, setUser] = useState(initialState);
   const [newUser, setNewUser] = useState(false);
   const provider = new GoogleAuthProvider();
@@ -34,8 +35,8 @@ function Login() {
     const auth = getAuth();
     signInWithPopup(auth, provider)
       .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const token = credential.accessToken;
         const { displayName, photoURL, email } = result.user;
         console.log(displayName, photoURL, email);
 
@@ -70,7 +71,7 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission
-    if (user.email && user.password) {
+    if (newUser && user.email && user.password) {
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, user.email, user.password)
         .then((res) => {
@@ -81,6 +82,7 @@ function Login() {
           setUser(newUserInfo);
           updateUsaerName(user.name)
           console.log("sign in user info", res.user)
+          setLoggedInUser(newUserInfo);
         })
         .catch((error) => {
           const newUserInfo = { ...user };
@@ -90,13 +92,13 @@ function Login() {
         });
     }
 
-    if (!newUser && user.email && user.password) {
+   else if (user.email && user.password) {
       const auth = getAuth();
       signInWithEmailAndPassword(auth, user.email, user.password)
         .then((res) => {
-          const newUserInfo = { ...user };
-          (newUserInfo.error = ""), (newUserInfo.success = true);
+          const newUserInfo = { ...user, error: "", success: true };
           setUser(newUserInfo);
+          setLoggedInUser(newUserInfo)
         })
         .catch((error) => {
           const newUserInfo = { ...user };
